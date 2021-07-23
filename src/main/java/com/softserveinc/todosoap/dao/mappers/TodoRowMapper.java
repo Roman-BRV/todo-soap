@@ -17,7 +17,7 @@ public class TodoRowMapper implements RowMapper<Todo> {
 		todo.setTaskText(row.getString("tasktext"));
 		todo.setTaskStatus(TaskStatus.fromValue(row.getString("taskstatus")));
 		todo.setTags(row.getList("tags", String.class));
-		todo.setCreated(row.getLocalDate("created"));
+		todo.setCreated(row.getInstant("created"));
 
 		return todo;
 	}

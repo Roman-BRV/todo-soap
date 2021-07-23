@@ -8,6 +8,8 @@ import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
+import java.util.List;
+
 @Endpoint
 public class TodoTaskEndpoint {
 
@@ -25,7 +27,7 @@ public class TodoTaskEndpoint {
 	@ResponsePayload
 	public AddTodoTaskResponse addTodoTask(@RequestPayload AddTodoTaskRequest request){
 		AddTodoTaskResponse response = new AddTodoTaskResponse();
-		response.setTodoTask(todoTaskService.add(request.getUserEmail(), request.getTaskText()));
+		response.setTodoTask(todoTaskService.add(request.getUserEmail(), request.getTaskText(), request.getTags()));
 		return response;
 	}
 
@@ -41,15 +43,45 @@ public class TodoTaskEndpoint {
 	@ResponsePayload
 	public UpdateTodoTaskResponse findTodoTask(@RequestPayload UpdateTodoTaskRequest request){
 		UpdateTodoTaskResponse response = new UpdateTodoTaskResponse();
-		response.setTodoTask(todoTaskService.update(request.getUserEmail(), request.getOldTaskText(), request.getNewTaskText(), request.getTaskStatus()));
+		response.setTodoTask(todoTaskService.update(request.getUserEmail(), request.getOldTaskText(), request.getNewTaskText(), request.getTaskStatus(), request.getTags()));
 		return response;
 	}
 
 	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "removeTodoTaskRequest")
 	@ResponsePayload
-	public RemoveTodoTaskResponse findTodoTask(@RequestPayload RemoveTodoTaskRequest request){
+	public RemoveTodoTaskResponse removeTodoTask(@RequestPayload RemoveTodoTaskRequest request){
 		RemoveTodoTaskResponse response = new RemoveTodoTaskResponse();
-		response.setTodoTask(todoTaskService.remove(request.getUserEmail(), request.getTaskText()));
+		response.setResponse(todoTaskService.remove(request.getUserEmail(), request.getTaskText()));
+		return response;
+	}
+
+	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "getTodoTasksByStatusRequest")
+	@ResponsePayload
+	public GetTodoTasksByStatusResponse getTodoTasksByStatus(@RequestPayload GetTodoTasksByStatusRequest request){
+		List<TodoTask> todoTasks = todoTaskService.getTodoTasksByStatus(request.getUserEmail(), request.getTaskStatus());
+
+		GetTodoTasksByStatusResponse response = new GetTodoTasksByStatusResponse();
+		response.getTodoTask().addAll(todoTasks);
+		return response;
+	}
+
+	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "getTodoTasksByTagRequest")
+	@ResponsePayload
+	public GetTodoTasksByTagResponse getTodoTasksByTag(@RequestPayload GetTodoTasksByTagRequest request){
+		List<TodoTask> todoTasks = todoTaskService.getTodoTasksByTag(request.getUserEmail(), request.getTag());
+
+		GetTodoTasksByTagResponse response = new GetTodoTasksByTagResponse();
+		response.getTodoTask().addAll(todoTasks);
+		return response;
+	}
+
+	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "getTodoTasksByCreatedOrderRequest")
+	@ResponsePayload
+	public GetTodoTasksByCreatedOrderResponse getTodoTasksByCreatedOrder(@RequestPayload GetTodoTasksByCreatedOrderRequest request){
+		List<TodoTask> todoTasks = todoTaskService.getTodoTasksByCreatedOrder(request.getUserEmail());
+
+		GetTodoTasksByCreatedOrderResponse response = new GetTodoTasksByCreatedOrderResponse();
+		response.getTodoTask().addAll(todoTasks);
 		return response;
 	}
 }

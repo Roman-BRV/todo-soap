@@ -9,6 +9,7 @@
             <xs:sequence>
                 <xs:element name="taskText" type="xs:string"/>
                 <xs:element name="userEmail" type="xs:string" default="guest@useremail.com"/>
+                <xs:element name="tags" type="tns:stringlist"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -45,6 +46,7 @@
                 <xs:element name="newTaskText" type="xs:string"/>
                 <xs:element name="userEmail" type="xs:string" default="guest@useremail.com"/>
                 <xs:element name="taskStatus" type="tns:taskStatus"/>
+                <xs:element name="tags" type="tns:stringlist"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -69,7 +71,57 @@
     <xs:element name="removeTodoTaskResponse">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="todoTask" type="tns:todoTask"/>
+                <xs:element name="response" type="xs:boolean"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getTodoTasksByStatusRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="userEmail" type="xs:string" default="guest@useremail.com"/>
+                <xs:element name="taskStatus" type="tns:taskStatus"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getTodoTasksByStatusResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="todoTask" maxOccurs="unbounded" type="tns:todoTask"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getTodoTasksByTagRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="userEmail" type="xs:string" default="guest@useremail.com"/>
+                <xs:element name="tag" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getTodoTasksByTagResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="todoTask" maxOccurs="unbounded" type="tns:todoTask"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getTodoTasksByCreatedOrderRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="userEmail" type="xs:string" default="guest@useremail.com"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="getTodoTasksByCreatedOrderResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="todoTask" maxOccurs="unbounded" type="tns:todoTask"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -162,8 +214,13 @@
             </xs:element>
             <xs:element name="taskText" type="xs:string"/>
             <xs:element name="taskStatus" type="tns:taskStatus"/>
+            <xs:element name="tags" type="tns:stringlist"/>
         </xs:sequence>
     </xs:complexType>
+    
+    <xs:simpleType name="stringlist">
+        <xs:list itemType="xs:string"/>
+    </xs:simpleType>
 
     <xs:complexType name="user">
         <xs:sequence>

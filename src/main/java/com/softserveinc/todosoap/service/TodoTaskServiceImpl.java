@@ -8,9 +8,11 @@ import com.softservinc.todosoap.TodoTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class TodoTaskServiceImpl implements TodoTaskService {
@@ -22,15 +24,83 @@ public class TodoTaskServiceImpl implements TodoTaskService {
 		this.todoTaskDAO = todoTaskDAO;
 	}
 
+	public TodoTask add(String userEmail, String taskText, List<String> tags){
+
+		TodoTask todoTask = new TodoTask();
+		todoTask.setUserEmail(userEmail);
+		todoTask.setTaskText(taskText);
+		todoTask.setTaskStatus(TaskStatus.ACTIVE);
+		todoTask.getTags().addAll(tags);
+
+		Todo modelTodo = mapToModel(todoTask);
+		modelTodo.setId(UUIDs.timeBased());
+		modelTodo.setCreated(Instant.now());
+		return mapToResponse(todoTaskDAO.add(modelTodo));
+	}
+
+	public TodoTask findByUserEmailAndText(String userEmail, String taskText){
+
+		Todo response = todoTaskDAO.findByUserEmailAndText(userEmail, taskText);
+		return mapToResponse(response);
+	}
+
+	public TodoTask update(String userEmail, String oldTaskText, String newTaskText, TaskStatus taskStatus, List<String> tags){
+
+		Todo oldTask = todoTaskDAO.findByUserEmailAndText(userEmail, oldTaskText);
+		Todo newTask = oldTask;
+		newTask.setTaskText(newTaskText);
+		newTask.setTaskStatus(taskStatus);
+		newTask.setTags(tags);
+
+		Todo response = todoTaskDAO.update(newTask);
+		return mapToResponse(response);
+	}
+
+	@Override
+	public boolean remove(String userEmail, String taskText) {
+
+		Todo removedTodo = todoTaskDAO.findByUserEmailAndText(userEmail, taskText);
+		return todoTaskDAO.remove(removedTodo.getId());
+	}
+
+	@Override
+	public List<TodoTask> getTodoTasksByStatus(String userEmail, TaskStatus taskStatus) {
+
+		List<Todo> todos = todoTaskDAO.getTodoTasksByStatus(userEmail, taskStatus);
+		return todos.stream()
+				.map(this::mapToResponse)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<TodoTask> getTodoTasksByTag(String userEmail, String tag) {
+
+		List<Todo> todos = todoTaskDAO.getTodoTasksByTag(userEmail, tag);
+		return todos.stream()
+				.map(this::mapToResponse)
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<TodoTask> getTodoTasksByCreatedOrder(String userEmail) {
+
+		List<Todo> todos = todoTaskDAO.getAllTodoTasksByUserEmail(userEmail);
+		return todos.stream()
+				.sorted(Comparator.comparing(Todo::getCreated))
+				.map(this::mapToResponse)
+				.collect(Collectors.toList());
+	}
+
 	private Todo mapToModel(TodoTask todoTask){
 
 		Todo model = new Todo();
-		model.setId(UUIDs.timeBased());
+		if(todoTask.getId() != null){
+			model.setId(UUID.fromString(todoTask.getId()));
+		}
 		model.setUserEmail(todoTask.getUserEmail());
 		model.setTaskText(todoTask.getTaskText());
 		model.setTaskStatus(todoTask.getTaskStatus());
-		model.setTags(new ArrayList<>(List.of("tag")));
-		model.setCreated(LocalDate.now());
+		model.setTags(todoTask.getTags());
 
 		return model;
 	}
@@ -46,49 +116,8 @@ public class TodoTaskServiceImpl implements TodoTaskService {
 		response.setUserEmail(todo.getUserEmail());
 		response.setTaskText(todo.getTaskText());
 		response.setTaskStatus(todo.getTaskStatus());
+		response.getTags().addAll(todo.getTags());
 
 		return response;
-	}
-	public TodoTask add(String userEmail, String taskText){
-
-		TodoTask todoTask = new TodoTask();
-		todoTask.setUserEmail(userEmail);
-		todoTask.setTaskText(taskText);
-		todoTask.setTaskStatus(TaskStatus.ACTIVE);
-
-		Todo response = todoTaskDAO.add(mapToModel(todoTask));
-		return mapToResponse(response);
-	}
-
-	public TodoTask findByUserEmailAndText(String userEmail, String taskText){
-
-		Todo response = todoTaskDAO.findByUserEmailAndText(userEmail, taskText);
-		return mapToResponse(response);
-	}
-
-	public TodoTask update(String userEmail, String oldTaskText, String newTaskText, TaskStatus taskStatus){
-
-		Todo oldTask = todoTaskDAO.findByUserEmailAndText(userEmail, oldTaskText);
-		Todo newTask = oldTask;
-		newTask.setTaskText(newTaskText);
-		newTask.setTaskStatus(taskStatus);
-
-		Todo response = todoTaskDAO.update(newTask);
-		return mapToResponse(response);
-	}
-
-	@Override
-	public TodoTask remove(String userEmail, String taskText) {
-
-		Todo removedTodo = todoTaskDAO.findByUserEmailAndText(userEmail, taskText);
-		if(todoTaskDAO.remove(removedTodo.getId())){
-			return mapToResponse(removedTodo);
-		}else{
-			TodoTask unexistTodoTask = new TodoTask();
-			unexistTodoTask.setUserEmail(userEmail);
-			unexistTodoTask.setTaskText(taskText);
-			unexistTodoTask.setTaskStatus(TaskStatus.ACTIVE);
-			return unexistTodoTask;
-		}
 	}
 }

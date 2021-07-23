@@ -4,7 +4,7 @@ import com.softservinc.todosoap.TaskStatus;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +17,7 @@ public class Todo {
 	private String taskText;
 	private TaskStatus taskStatus;
 	private List<String> tags;
-	private LocalDate created;
+	private Instant created;
 
 	public void addTag(String tag) {
 		this.tags.add(tag);
@@ -63,11 +63,11 @@ public class Todo {
 		this.tags = tags;
 	}
 
-	public LocalDate getCreated() {
+	public Instant getCreated() {
 		return created;
 	}
 
-	public void setCreated(LocalDate created) {
+	public void setCreated(Instant created) {
 		this.created = created;
 	}
 
