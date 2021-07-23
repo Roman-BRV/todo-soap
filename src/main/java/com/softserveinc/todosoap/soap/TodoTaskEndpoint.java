@@ -14,7 +14,6 @@ import java.util.List;
 public class TodoTaskEndpoint {
 
 	private static final String NAMESPACE_URI = "http://todosoap.softservinc.com/";
-	//private static final String GUEST_USER_EMAIL = "guest@useremail.com";
 
 	private TodoTaskService todoTaskService;
 

@@ -1,6 +1,5 @@
 package com.softserveinc.todosoap.service;
 
-import com.datastax.driver.core.utils.UUIDs;
 import com.softserveinc.todosoap.dao.TodoTaskDAO;
 import com.softserveinc.todosoap.models.Todo;
 import com.softservinc.todosoap.TaskStatus;
@@ -33,7 +32,7 @@ public class TodoTaskServiceImpl implements TodoTaskService {
 		todoTask.getTags().addAll(tags);
 
 		Todo modelTodo = mapToModel(todoTask);
-		modelTodo.setId(UUIDs.timeBased());
+		modelTodo.setId(UUID.randomUUID());
 		modelTodo.setCreated(Instant.now());
 		return mapToResponse(todoTaskDAO.add(modelTodo));
 	}

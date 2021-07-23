@@ -14,6 +14,8 @@ import java.util.UUID;
 @Repository
 public class TodoTaskDAOImpl implements TodoTaskDAO{
 
+	private static final String SELECT_WHERE = "SELECT * FROM todosoap.todo WHERE ";
+
 	@Autowired
 	private CassandraOperations cassandraTemplate;
 
@@ -33,13 +35,8 @@ public class TodoTaskDAOImpl implements TodoTaskDAO{
 	@Override
 	public Todo findByUserEmailAndText(String userEmail, String taskText) {
 
-		String query = "SELECT * " +
-				"FROM todosoap.todo " +
-				"WHERE useremail = ? " +
-				"AND tasktext = ? limit 1 ALLOW FILTERING ;";
+		String query = SELECT_WHERE	+ "useremail = ? AND tasktext = ? limit 1 ALLOW FILTERING ;";
 		return cqlTemplate.queryForObject(query, new TodoRowMapper(), userEmail, taskText);
-//		Select.Where select = QueryBuilder.select().from(DB_TABLE).where(QueryBuilder.eq("useremail", userEmail)).and(QueryBuilder.eq("tasktext", taskText));
-//		return cassandraTemplate.selectOne(select, Todo.class);
 	}
 
 	@Override
@@ -55,29 +52,21 @@ public class TodoTaskDAOImpl implements TodoTaskDAO{
 	@Override
 	public List<Todo> getTodoTasksByStatus(String userEmail, TaskStatus taskStatus) {
 
-		String query = "SELECT * " +
-				"FROM todosoap.todo " +
-				"WHERE useremail = ? " +
-				"AND taskstatus = ? ALLOW FILTERING ;";
+		String query = SELECT_WHERE + "useremail = ? AND taskstatus = ? ALLOW FILTERING ;";
 		return cqlTemplate.query(query, new TodoRowMapper(), userEmail, taskStatus.value());
 	}
 
 	@Override
 	public List<Todo> getTodoTasksByTag(String userEmail, String tag) {
 
-		String query = "SELECT * " +
-				"FROM todosoap.todo " +
-				"WHERE useremail = ? " +
-				"AND tags contains ? ALLOW FILTERING ;";
+		String query = SELECT_WHERE + "useremail = ? AND tags contains ? ALLOW FILTERING ;";
 		return cqlTemplate.query(query, new TodoRowMapper(), userEmail, tag);
 	}
 
 	@Override
 	public List<Todo> getAllTodoTasksByUserEmail(String userEmail) {
 
-		String query = "SELECT * " +
-				"FROM todosoap.todo " +
-				"WHERE useremail = ? ALLOW FILTERING ;";
+		String query = SELECT_WHERE + "useremail = ? ALLOW FILTERING ;";
 		return cqlTemplate.query(query, new TodoRowMapper(), userEmail);
 	}
 }
