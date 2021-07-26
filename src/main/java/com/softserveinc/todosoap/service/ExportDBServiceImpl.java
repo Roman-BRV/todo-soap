@@ -22,11 +22,10 @@ public class ExportDBServiceImpl implements ExportDBService{
 	}
 
 	@Override
-	public String claimExportDB(String userEmail) {
+	public String claimExportDB() {
 
 		ExportDBClaim claim = new ExportDBClaim();
 		claim.setId(UUID.randomUUID());
-		claim.setUserEmail(userEmail);
 		claim.setCreated(Instant.now());
 		claim.setStatus("ACCEPTED");
 		claim.setResultPath("");
@@ -37,16 +36,16 @@ public class ExportDBServiceImpl implements ExportDBService{
 	}
 
 	@Override
-	public String checkStatusExportDB(String userEmail, String id) {
+	public String checkStatusExportDB(String id) {
 
-		return exportDBDAO.checkStatusExportDB(userEmail, UUID.fromString(id));
+		return exportDBDAO.checkStatus(UUID.fromString(id));
 	}
 
 	@Override
-	public String downloadLinkExportDB(String userEmail, String id) {
+	public String downloadLinkExportDB(String id) {
 
 		ExportDBClaim claim = exportDBDAO.findById(UUID.fromString(id));
-		if(claim.getUserEmail().equals(userEmail) && claim.getStatus().equals("COMPLETED")){
+		if(claim.getStatus().equals("COMPLETED")){
 			return claim.getResultPath();
 		} else {
 			return "";//throw not found exception

@@ -8,11 +8,11 @@ public interface ExportDBDAO {
 
 	void create(ExportDBClaim claim);
 
-	String checkStatusExportDB(String userEmail, UUID id);
+	String checkStatus(UUID id);
 
 	ExportDBClaim findById(UUID id);
 
-    boolean changeClaimStatus(String claimId, String status);
+    boolean changeStatus(String claimId, String status);
 
-	boolean completeExportClaim(String claimId, String status, String filepath);
+	boolean completeClaim(String claimId, String status, String filepath);
 }

@@ -15,7 +15,7 @@ public class TodoTaskEndpoint {
 
 	private static final String NAMESPACE_URI = "http://todosoap.softservinc.com/";
 
-	private TodoTaskService todoTaskService;
+	private final TodoTaskService todoTaskService;
 
 	@Autowired
 	public TodoTaskEndpoint(TodoTaskService todoTaskService){
@@ -26,23 +26,23 @@ public class TodoTaskEndpoint {
 	@ResponsePayload
 	public AddTodoTaskResponse addTodoTask(@RequestPayload AddTodoTaskRequest request){
 		AddTodoTaskResponse response = new AddTodoTaskResponse();
-		response.setTodoTask(todoTaskService.add(request.getUserEmail(), request.getTaskText(), request.getTags()));
+		response.setTodoTask(todoTaskService.add(request.getTaskText(), request.getTags()));
 		return response;
 	}
 
-	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "findTodoTaskRequest")
+	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "findTodoTaskByTextRequest")
 	@ResponsePayload
-	public FindTodoTaskResponse findTodoTask(@RequestPayload FindTodoTaskRequest request){
-		FindTodoTaskResponse response = new FindTodoTaskResponse();
-		response.setTodoTask(todoTaskService.findByUserEmailAndText(request.getUserEmail(), request.getTaskText()));
+	public FindTodoTaskByTextResponse findTodoTask(@RequestPayload FindTodoTaskByTextRequest request){
+		FindTodoTaskByTextResponse response = new FindTodoTaskByTextResponse();
+		response.setTodoTask(todoTaskService.findByText(request.getTaskText()));
 		return response;
 	}
 
 	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "updateTodoTaskRequest")
 	@ResponsePayload
-	public UpdateTodoTaskResponse findTodoTask(@RequestPayload UpdateTodoTaskRequest request){
+	public UpdateTodoTaskResponse updateTodoTask(@RequestPayload UpdateTodoTaskRequest request){
 		UpdateTodoTaskResponse response = new UpdateTodoTaskResponse();
-		response.setTodoTask(todoTaskService.update(request.getUserEmail(), request.getOldTaskText(), request.getNewTaskText(), request.getTaskStatus(), request.getTags()));
+		response.setTodoTask(todoTaskService.update(request.getOldTaskText(), request.getNewTaskText(), request.getTaskStatus(), request.getTags()));
 		return response;
 	}
 
@@ -50,14 +50,14 @@ public class TodoTaskEndpoint {
 	@ResponsePayload
 	public RemoveTodoTaskResponse removeTodoTask(@RequestPayload RemoveTodoTaskRequest request){
 		RemoveTodoTaskResponse response = new RemoveTodoTaskResponse();
-		response.setResponse(todoTaskService.remove(request.getUserEmail(), request.getTaskText()));
+		response.setResponse(todoTaskService.removeByText(request.getTaskText()));
 		return response;
 	}
 
 	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "getTodoTasksByStatusRequest")
 	@ResponsePayload
 	public GetTodoTasksByStatusResponse getTodoTasksByStatus(@RequestPayload GetTodoTasksByStatusRequest request){
-		List<TodoTask> todoTasks = todoTaskService.getTodoTasksByStatus(request.getUserEmail(), request.getTaskStatus());
+		List<TodoTask> todoTasks = todoTaskService.getTodoTasksByStatus(request.getTaskStatus());
 
 		GetTodoTasksByStatusResponse response = new GetTodoTasksByStatusResponse();
 		response.getTodoTask().addAll(todoTasks);
@@ -67,19 +67,19 @@ public class TodoTaskEndpoint {
 	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "getTodoTasksByTagRequest")
 	@ResponsePayload
 	public GetTodoTasksByTagResponse getTodoTasksByTag(@RequestPayload GetTodoTasksByTagRequest request){
-		List<TodoTask> todoTasks = todoTaskService.getTodoTasksByTag(request.getUserEmail(), request.getTag());
+		List<TodoTask> todoTasks = todoTaskService.getTodoTasksByTag(request.getTag());
 
 		GetTodoTasksByTagResponse response = new GetTodoTasksByTagResponse();
 		response.getTodoTask().addAll(todoTasks);
 		return response;
 	}
 
-	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "getTodoTasksByCreatedOrderRequest")
+	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "getAllTodoTasksOrderByCreatedRequest")
 	@ResponsePayload
-	public GetTodoTasksByCreatedOrderResponse getTodoTasksByCreatedOrder(@RequestPayload GetTodoTasksByCreatedOrderRequest request){
-		List<TodoTask> todoTasks = todoTaskService.getTodoTasksByCreatedOrder(request.getUserEmail());
+	public GetAllTodoTasksOrderByCreatedResponse getAllTodoTasksOrderByCreated(){
+		List<TodoTask> todoTasks = todoTaskService.getAllTodoTasksOrderByCreated();
 
-		GetTodoTasksByCreatedOrderResponse response = new GetTodoTasksByCreatedOrderResponse();
+		GetAllTodoTasksOrderByCreatedResponse response = new GetAllTodoTasksOrderByCreatedResponse();
 		response.getTodoTask().addAll(todoTasks);
 		return response;
 	}

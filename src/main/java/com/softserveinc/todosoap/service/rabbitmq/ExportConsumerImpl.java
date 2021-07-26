@@ -4,11 +4,11 @@ import com.softserveinc.todosoap.dao.ExportDBDAO;
 import com.softserveinc.todosoap.dao.TodoTaskDAO;
 import com.softserveinc.todosoap.models.Todo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Service
+@Component
 public class ExportConsumerImpl implements ExportConsumer {
 
 	private static final String FILEPATH = "C:\\\\";
@@ -25,7 +25,7 @@ public class ExportConsumerImpl implements ExportConsumer {
 	@Override
 	public void receiveMessage(String claimId){
 
-		if(!exportDBDAO.changeClaimStatus(claimId, "IN PROGRESS")){
+		if(!exportDBDAO.changeStatus(claimId, "IN PROGRESS")){
 			System.out.println("Status not changed!");//throw
 		}
 		System.out.println("Status changed!");
@@ -37,7 +37,7 @@ public class ExportConsumerImpl implements ExportConsumer {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		if(!exportDBDAO.completeExportClaim(claimId, "COMPLETED", FILEPATH)){
+		if(!exportDBDAO.completeClaim(claimId, "COMPLETED", FILEPATH)){
 			System.out.println("Status not changed!");//throw
 		}
 		System.out.println("Status changed! Filepath - " + FILEPATH);

@@ -26,10 +26,10 @@ public class ExportDBDAOImpl implements ExportDBDAO{
 	}
 
 	@Override
-	public String checkStatusExportDB(String userEmail, UUID id) {
+	public String checkStatus(UUID id) {
 
-		String query = "SELECT status FROM todosoap.exportdbclaim WHERE useremail = ? AND id = ? ALLOW FILTERING;";
-		return cqlTemplate.queryForObject(query, String.class, userEmail, id);
+		String query = "SELECT status FROM todosoap.exportdbclaim WHERE id = ? ALLOW FILTERING;";
+		return cqlTemplate.queryForObject(query, String.class, id);
 	}
 
 	@Override
@@ -39,14 +39,14 @@ public class ExportDBDAOImpl implements ExportDBDAO{
 	}
 
 	@Override
-	public boolean changeClaimStatus(String claimId, String status) {
+	public boolean changeStatus(String claimId, String status) {
 
 		String query = "UPDATE todosoap.exportdbclaim SET status = ? WHERE id = ?;";
 		return cqlTemplate.execute(query, status, UUID.fromString(claimId));
 	}
 
 	@Override
-	public boolean completeExportClaim(String claimId, String status, String filepath) {
+	public boolean completeClaim(String claimId, String status, String filepath) {
 
 		String query = "UPDATE todosoap.exportdbclaim SET status = ?, resultpath = ? WHERE id = ?;";
 		return cqlTemplate.execute(query, status, filepath, UUID.fromString(claimId));

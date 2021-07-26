@@ -13,17 +13,15 @@ public interface TodoTaskDAO {
 
 	Todo findById(UUID id);
 
-	Todo findByUserEmailAndText(String userEmail, String taskText);
+	Todo findByText(String taskText);
 
 	Todo update(Todo todoTask);
 
 	boolean remove(UUID id);
 
-    List<Todo> getTodoTasksByStatus(String userEmail, TaskStatus taskStatus);
+    List<Todo> getTodoTasksByStatus(TaskStatus taskStatus);
 
-	List<Todo> getTodoTasksByTag(String userEmail, String tag);
-
-	List<Todo> getAllTodoTasksByUserEmail(String userEmail);
+	List<Todo> getTodoTasksByTag(String tag);
 
     List<Todo> getAllTodoTasks();
 }

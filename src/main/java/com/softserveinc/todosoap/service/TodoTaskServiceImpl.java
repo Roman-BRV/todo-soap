@@ -16,17 +16,16 @@ import java.util.stream.Collectors;
 @Service
 public class TodoTaskServiceImpl implements TodoTaskService {
 
-	private TodoTaskDAO todoTaskDAO;
+	private final TodoTaskDAO todoTaskDAO;
 
 	@Autowired
 	public TodoTaskServiceImpl(TodoTaskDAO todoTaskDAO){
 		this.todoTaskDAO = todoTaskDAO;
 	}
 
-	public TodoTask add(String userEmail, String taskText, List<String> tags){
+	public TodoTask add(String taskText, List<String> tags){
 
 		TodoTask todoTask = new TodoTask();
-		todoTask.setUserEmail(userEmail);
 		todoTask.setTaskText(taskText);
 		todoTask.setTaskStatus(TaskStatus.ACTIVE);
 		todoTask.getTags().addAll(tags);
@@ -37,16 +36,15 @@ public class TodoTaskServiceImpl implements TodoTaskService {
 		return mapToResponse(todoTaskDAO.add(modelTodo));
 	}
 
-	public TodoTask findByUserEmailAndText(String userEmail, String taskText){
+	public TodoTask findByText(String taskText){
 
-		Todo response = todoTaskDAO.findByUserEmailAndText(userEmail, taskText);
+		Todo response = todoTaskDAO.findByText(taskText);
 		return mapToResponse(response);
 	}
 
-	public TodoTask update(String userEmail, String oldTaskText, String newTaskText, TaskStatus taskStatus, List<String> tags){
+	public TodoTask update(String oldTaskText, String newTaskText, TaskStatus taskStatus, List<String> tags){
 
-		Todo oldTask = todoTaskDAO.findByUserEmailAndText(userEmail, oldTaskText);
-		Todo newTask = oldTask;
+		Todo newTask = todoTaskDAO.findByText(oldTaskText);
 		newTask.setTaskText(newTaskText);
 		newTask.setTaskStatus(taskStatus);
 		newTask.setTags(tags);
@@ -56,44 +54,43 @@ public class TodoTaskServiceImpl implements TodoTaskService {
 	}
 
 	@Override
-	public boolean remove(String userEmail, String taskText) {
+	public boolean removeByText(String taskText) {
 
-		Todo removedTodo = todoTaskDAO.findByUserEmailAndText(userEmail, taskText);
+		Todo removedTodo = todoTaskDAO.findByText(taskText);
 		return todoTaskDAO.remove(removedTodo.getId());
 	}
 
 	@Override
-	public List<TodoTask> getTodoTasksByStatus(String userEmail, TaskStatus taskStatus) {
+	public List<TodoTask> getTodoTasksByStatus(TaskStatus taskStatus) {
 
-		List<Todo> todos = todoTaskDAO.getTodoTasksByStatus(userEmail, taskStatus);
+		List<Todo> todos = todoTaskDAO.getTodoTasksByStatus(taskStatus);
 		return todos.stream()
 				.map(this::mapToResponse)
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public List<TodoTask> getTodoTasksByTag(String userEmail, String tag) {
+	public List<TodoTask> getTodoTasksByTag(String tag) {
 
-		List<Todo> todos = todoTaskDAO.getTodoTasksByTag(userEmail, tag);
+		List<Todo> todos = todoTaskDAO.getTodoTasksByTag(tag);
 		return todos.stream()
 				.map(this::mapToResponse)
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public List<TodoTask> getTodoTasksByCreatedOrder(String userEmail) {
+	public List<TodoTask> getAllTodoTasksOrderByCreated() {
 
-		List<Todo> todos = todoTaskDAO.getAllTodoTasksByUserEmail(userEmail);
+		List<Todo> todos = todoTaskDAO.getAllTodoTasks();
 		return todos.stream()
 				.sorted(Comparator.comparing(Todo::getCreated))
 				.map(this::mapToResponse)
 				.collect(Collectors.toList());
 	}
 
-	public String getAllTodoTasks(){
+	public List<Todo>  getAllTodoTasks(){
 
-		List<Todo> todos = todoTaskDAO.getAllTodoTasks();
-		return todos.toString();
+		return todoTaskDAO.getAllTodoTasks();
 	}
 
 	private Todo mapToModel(TodoTask todoTask){
@@ -102,7 +99,6 @@ public class TodoTaskServiceImpl implements TodoTaskService {
 		if(todoTask.getId() != null){
 			model.setId(UUID.fromString(todoTask.getId()));
 		}
-		model.setUserEmail(todoTask.getUserEmail());
 		model.setTaskText(todoTask.getTaskText());
 		model.setTaskStatus(todoTask.getTaskStatus());
 		model.setTags(todoTask.getTags());
@@ -118,7 +114,6 @@ public class TodoTaskServiceImpl implements TodoTaskService {
 		}else {
 			response.setId(todo.getId().toString());
 		}
-		response.setUserEmail(todo.getUserEmail());
 		response.setTaskText(todo.getTaskText());
 		response.setTaskStatus(todo.getTaskStatus());
 		response.getTags().addAll(todo.getTags());

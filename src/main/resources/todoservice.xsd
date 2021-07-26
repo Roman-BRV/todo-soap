@@ -8,7 +8,6 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="taskText" type="xs:string"/>
-                <xs:element name="userEmail" type="xs:string" default="guest@useremail.com"/>
                 <xs:element name="tags" type="tns:stringlist"/>
             </xs:sequence>
         </xs:complexType>
@@ -22,16 +21,15 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="findTodoTaskRequest">
+    <xs:element name="findTodoTaskByTextRequest">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="taskText" type="xs:string"/>
-                <xs:element name="userEmail" type="xs:string" default="guest@useremail.com"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="findTodoTaskResponse">
+    <xs:element name="findTodoTaskByTextResponse">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="todoTask" type="tns:todoTask"/>
@@ -44,7 +42,6 @@
             <xs:sequence>
                 <xs:element name="oldTaskText" type="xs:string"/>
                 <xs:element name="newTaskText" type="xs:string"/>
-                <xs:element name="userEmail" type="xs:string" default="guest@useremail.com"/>
                 <xs:element name="taskStatus" type="tns:taskStatus"/>
                 <xs:element name="tags" type="tns:stringlist"/>
             </xs:sequence>
@@ -63,7 +60,6 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="taskText" type="xs:string"/>
-                <xs:element name="userEmail" type="xs:string" default="guest@useremail.com"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -79,7 +75,6 @@
     <xs:element name="getTodoTasksByStatusRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="userEmail" type="xs:string" default="guest@useremail.com"/>
                 <xs:element name="taskStatus" type="tns:taskStatus"/>
             </xs:sequence>
         </xs:complexType>
@@ -96,7 +91,6 @@
     <xs:element name="getTodoTasksByTagRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="userEmail" type="xs:string" default="guest@useremail.com"/>
                 <xs:element name="tag" type="xs:string"/>
             </xs:sequence>
         </xs:complexType>
@@ -110,15 +104,14 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="getTodoTasksByCreatedOrderRequest">
+    <xs:element name="getAllTodoTasksOrderByCreatedRequest">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="userEmail" type="xs:string" default="guest@useremail.com"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="getTodoTasksByCreatedOrderResponse">
+    <xs:element name="getAllTodoTasksOrderByCreatedResponse">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="todoTask" maxOccurs="unbounded" type="tns:todoTask"/>
@@ -126,92 +119,9 @@
         </xs:complexType>
     </xs:element>
 
-
-    <xs:element name="addUserRequest">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="firstName" type="xs:string"/>
-                <xs:element name="lastName" type="xs:string"/>
-                <xs:element name="userEmail" type="xs:string"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="addUserResponse">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="user" type="tns:user"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="findUserRequest">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="firstName" type="xs:string"/>
-                <xs:element name="lastName" type="xs:string"/>
-                <xs:element name="userEmail" type="xs:string"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="findUserResponse">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="user" type="tns:user"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="updateUserRequest">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="oldFirstName" type="xs:string"/>
-                <xs:element name="oldLastName" type="xs:string"/>
-                <xs:element name="oldUserEmail" type="xs:string"/>
-                <xs:element name="newFirstName" type="xs:string"/>
-                <xs:element name="newLastName" type="xs:string"/>
-                <xs:element name="newUserEmail" type="xs:string"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="updateUserResponse">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="user" type="tns:user"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="removeUserRequest">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="firstName" type="xs:string"/>
-                <xs:element name="lastName" type="xs:string"/>
-                <xs:element name="userEmail" type="xs:string"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="removeUserResponse">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element name="user" type="tns:user"/>
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
     <xs:complexType name="todoTask">
         <xs:sequence>
             <xs:element name="id" type="xs:string"/>
-            <xs:element name="userEmail">
-                <xs:simpleType>
-                    <xs:restriction base="xs:string">
-                        <xs:pattern value="[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}"/>
-                    </xs:restriction>
-                </xs:simpleType>
-            </xs:element>
             <xs:element name="taskText" type="xs:string"/>
             <xs:element name="taskStatus" type="tns:taskStatus"/>
             <xs:element name="tags" type="tns:stringlist"/>
@@ -221,21 +131,6 @@
     <xs:simpleType name="stringlist">
         <xs:list itemType="xs:string"/>
     </xs:simpleType>
-
-    <xs:complexType name="user">
-        <xs:sequence>
-            <xs:element name="id" type="xs:string"/>
-            <xs:element name="firstName" type="xs:string"/>
-            <xs:element name="lastName" type="xs:string"/>
-            <xs:element name="userEmail">
-                <xs:simpleType>
-                    <xs:restriction base="xs:string">
-                        <xs:pattern value="[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}"/>
-                    </xs:restriction>
-                </xs:simpleType>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
 
     <xs:simpleType name="taskStatus">
         <xs:restriction base="xs:string">

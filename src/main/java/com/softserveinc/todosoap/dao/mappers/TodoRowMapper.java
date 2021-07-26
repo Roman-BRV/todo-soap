@@ -13,7 +13,6 @@ public class TodoRowMapper implements RowMapper<Todo> {
 
 		Todo todo = new Todo();
 		todo.setId(row.getUuid("id"));
-		todo.setUserEmail(row.getString("useremail"));
 		todo.setTaskText(row.getString("tasktext"));
 		todo.setTaskStatus(TaskStatus.fromValue(row.getString("taskstatus")));
 		todo.setTags(row.getList("tags", String.class));

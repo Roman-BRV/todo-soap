@@ -13,7 +13,6 @@ public class Todo {
 
 	@PrimaryKey
 	private UUID id;
-	private String userEmail;
 	private String taskText;
 	private TaskStatus taskStatus;
 	private List<String> tags;
@@ -29,14 +28,6 @@ public class Todo {
 
 	public void setId(UUID id) {
 		this.id = id;
-	}
-
-	public String getUserEmail() {
-		return userEmail;
-	}
-
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
 	}
 
 	public String getTaskText() {
@@ -75,7 +66,6 @@ public class Todo {
 	public String toString() {
 		return "Todo{" +
 				"id=" + id +
-				", userEmail='" + userEmail + '\'' +
 				", todoTask='" + taskText + '\'' +
 				", taskStatus=" + taskStatus +
 				", tags=" + tags +

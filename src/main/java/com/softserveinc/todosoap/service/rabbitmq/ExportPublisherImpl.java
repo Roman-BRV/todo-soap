@@ -3,9 +3,9 @@ package com.softserveinc.todosoap.service.rabbitmq;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class ExportPublisherImpl implements ExportPublisher {
 
 	@Value("${rabbitmq.exportdb.exchange-name}")

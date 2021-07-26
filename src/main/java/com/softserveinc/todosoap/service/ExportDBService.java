@@ -2,9 +2,9 @@ package com.softserveinc.todosoap.service;
 
 public interface ExportDBService {
 
-	String claimExportDB(String userEmail);
+	String claimExportDB();
 
-	String checkStatusExportDB(String userEmail, String id);
+	String checkStatusExportDB(String id);
 
-	String downloadLinkExportDB(String userEmail, String id);
+	String downloadLinkExportDB(String id);
 }

@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/exportdb")
 public class TodoTaskRestController {
 
-	private static final String DEFAULT_USER_EMAIL = "guest@useremail.com";
-
 	private final ExportDBService exportDBService;
 
 	@Autowired
@@ -19,16 +17,16 @@ public class TodoTaskRestController {
 
 	@PostMapping("/claim")
 	public String claimExportDB(){
-		return exportDBService.claimExportDB(DEFAULT_USER_EMAIL);
+		return exportDBService.claimExportDB();
 	}
 
 	@GetMapping("/status/{id}")
 	public String checkStatusExportDB(@PathVariable String id){
-		return exportDBService.checkStatusExportDB(DEFAULT_USER_EMAIL, id);
+		return exportDBService.checkStatusExportDB(id);
 	}
 
 	@GetMapping("/download/{id}")
 	public String downloadExportDB(@PathVariable String id){
-		return exportDBService.downloadLinkExportDB(DEFAULT_USER_EMAIL, id);
+		return exportDBService.downloadLinkExportDB(id);
 	}
 }
