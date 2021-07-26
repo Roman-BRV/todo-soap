@@ -11,4 +11,8 @@ public interface ExportDBDAO {
 	String checkStatusExportDB(String userEmail, UUID id);
 
 	ExportDBClaim findById(UUID id);
+
+    boolean changeClaimStatus(String claimId, String status);
+
+	boolean completeExportClaim(String claimId, String status, String filepath);
 }

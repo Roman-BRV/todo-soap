@@ -12,7 +12,6 @@ import java.util.UUID;
 public class ExportDBDAOImpl implements ExportDBDAO{
 
 	private final CassandraOperations cassandraTemplate;
-
 	private final CqlTemplate cqlTemplate;
 
 	@Autowired
@@ -37,5 +36,19 @@ public class ExportDBDAOImpl implements ExportDBDAO{
 	public ExportDBClaim findById(UUID id) {
 
 		return cassandraTemplate.selectOneById(id, ExportDBClaim.class);
+	}
+
+	@Override
+	public boolean changeClaimStatus(String claimId, String status) {
+
+		String query = "UPDATE todosoap.exportdbclaim SET status = ? WHERE id = ?;";
+		return cqlTemplate.execute(query, status, UUID.fromString(claimId));
+	}
+
+	@Override
+	public boolean completeExportClaim(String claimId, String status, String filepath) {
+
+		String query = "UPDATE todosoap.exportdbclaim SET status = ?, resultpath = ? WHERE id = ?;";
+		return cqlTemplate.execute(query, status, filepath, UUID.fromString(claimId));
 	}
 }

@@ -14,13 +14,15 @@ import java.util.UUID;
 @Repository
 public class TodoTaskDAOImpl implements TodoTaskDAO{
 
-	private static final String SELECT_WHERE = "SELECT * FROM todosoap.todo WHERE ";
+	private final CassandraOperations cassandraTemplate;
+
+	private final CqlTemplate cqlTemplate;
 
 	@Autowired
-	private CassandraOperations cassandraTemplate;
-
-	@Autowired
-	private CqlTemplate cqlTemplate;
+	public TodoTaskDAOImpl(CassandraOperations cassandraTemplate, CqlTemplate cqlTemplate) {
+		this.cassandraTemplate = cassandraTemplate;
+		this.cqlTemplate = cqlTemplate;
+	}
 
 	@Override
 	public Todo add(Todo todo) {
@@ -35,7 +37,7 @@ public class TodoTaskDAOImpl implements TodoTaskDAO{
 	@Override
 	public Todo findByUserEmailAndText(String userEmail, String taskText) {
 
-		String query = SELECT_WHERE	+ "useremail = ? AND tasktext = ? limit 1 ALLOW FILTERING ;";
+		String query = "SELECT * FROM todosoap.todo WHERE useremail = ? AND tasktext = ? limit 1 ALLOW FILTERING;";
 		return cqlTemplate.queryForObject(query, new TodoRowMapper(), userEmail, taskText);
 	}
 
@@ -52,21 +54,28 @@ public class TodoTaskDAOImpl implements TodoTaskDAO{
 	@Override
 	public List<Todo> getTodoTasksByStatus(String userEmail, TaskStatus taskStatus) {
 
-		String query = SELECT_WHERE + "useremail = ? AND taskstatus = ? ALLOW FILTERING ;";
+		String query = "SELECT * FROM todosoap.todo WHERE useremail = ? AND taskstatus = ? ALLOW FILTERING;";
 		return cqlTemplate.query(query, new TodoRowMapper(), userEmail, taskStatus.value());
 	}
 
 	@Override
 	public List<Todo> getTodoTasksByTag(String userEmail, String tag) {
 
-		String query = SELECT_WHERE + "useremail = ? AND tags contains ? ALLOW FILTERING ;";
+		String query = "SELECT * FROM todosoap.todo WHERE useremail = ? AND tags contains ? ALLOW FILTERING;";
 		return cqlTemplate.query(query, new TodoRowMapper(), userEmail, tag);
 	}
 
 	@Override
 	public List<Todo> getAllTodoTasksByUserEmail(String userEmail) {
 
-		String query = SELECT_WHERE + "useremail = ? ALLOW FILTERING ;";
+		String query = "SELECT * FROM todosoap.todo WHERE useremail = ? ALLOW FILTERING;";
 		return cqlTemplate.query(query, new TodoRowMapper(), userEmail);
+	}
+
+	@Override
+	public List<Todo> getAllTodoTasks() {
+
+		String query = "SELECT * FROM todosoap.todo ALLOW FILTERING;";
+		return cqlTemplate.query(query, new TodoRowMapper());
 	}
 }

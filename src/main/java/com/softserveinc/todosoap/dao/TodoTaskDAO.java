@@ -24,4 +24,6 @@ public interface TodoTaskDAO {
 	List<Todo> getTodoTasksByTag(String userEmail, String tag);
 
 	List<Todo> getAllTodoTasksByUserEmail(String userEmail);
+
+    List<Todo> getAllTodoTasks();
 }

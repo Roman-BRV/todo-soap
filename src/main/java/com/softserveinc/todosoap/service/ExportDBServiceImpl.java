@@ -2,6 +2,7 @@ package com.softserveinc.todosoap.service;
 
 import com.softserveinc.todosoap.dao.ExportDBDAO;
 import com.softserveinc.todosoap.models.ExportDBClaim;
+import com.softserveinc.todosoap.service.rabbitmq.ExportPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +13,12 @@ import java.util.UUID;
 public class ExportDBServiceImpl implements ExportDBService{
 
 	private final ExportDBDAO exportDBDAO;
+	private final ExportPublisher exportPublisher;
 
 	@Autowired
-	public ExportDBServiceImpl(ExportDBDAO exportDBDAO) {
+	public ExportDBServiceImpl(ExportDBDAO exportDBDAO, ExportPublisher exportPublisher) {
 		this.exportDBDAO = exportDBDAO;
+		this.exportPublisher = exportPublisher;
 	}
 
 	@Override
@@ -29,6 +32,7 @@ public class ExportDBServiceImpl implements ExportDBService{
 		claim.setResultPath("");
 
 		exportDBDAO.create(claim);
+		exportPublisher.publishClaim(claim.getId().toString());
 		return claim.getId().toString();
 	}
 

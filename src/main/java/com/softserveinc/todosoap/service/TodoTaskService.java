@@ -20,4 +20,6 @@ public interface TodoTaskService {
 	List<TodoTask> getTodoTasksByTag(String userEmail, String tag);
 
 	List<TodoTask> getTodoTasksByCreatedOrder(String userEmail);
+
+	String getAllTodoTasks();
 }

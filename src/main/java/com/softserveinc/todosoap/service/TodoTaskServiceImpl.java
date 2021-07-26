@@ -90,6 +90,12 @@ public class TodoTaskServiceImpl implements TodoTaskService {
 				.collect(Collectors.toList());
 	}
 
+	public String getAllTodoTasks(){
+
+		List<Todo> todos = todoTaskDAO.getAllTodoTasks();
+		return todos.toString();
+	}
+
 	private Todo mapToModel(TodoTask todoTask){
 
 		Todo model = new Todo();
