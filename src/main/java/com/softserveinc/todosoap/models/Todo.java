@@ -4,16 +4,21 @@ import com.softservinc.todosoap.TaskStatus;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
+import javax.xml.bind.annotation.*;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
 @Table
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name = "todo")
+@XmlType(propOrder = {"id", "taskText", "taskStatus", "tags", "created"})
 public class Todo {
 
 	@PrimaryKey
 	private UUID id;
 	private String taskText;
+	@XmlSchemaType(name = "string")
 	private TaskStatus taskStatus;
 	private List<String> tags;
 	private Instant created;

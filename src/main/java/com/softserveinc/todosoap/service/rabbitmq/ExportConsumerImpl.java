@@ -2,16 +2,20 @@ package com.softserveinc.todosoap.service.rabbitmq;
 
 import com.softserveinc.todosoap.dao.ExportDBDAO;
 import com.softserveinc.todosoap.dao.TodoTaskDAO;
-import com.softserveinc.todosoap.models.Todo;
+import com.softserveinc.todosoap.models.TodoList;
+import com.softserveinc.todosoap.util.ObjectToXMLConverter;
+import com.softserveinc.todosoap.util.XMLFileSaver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.io.File;
 
 @Component
 public class ExportConsumerImpl implements ExportConsumer {
 
-	private static final String FILEPATH = "C:\\\\";
+	private static final Logger log = LoggerFactory.getLogger(ExportConsumerImpl.class);
 
 	private final TodoTaskDAO todoTaskDAO;
 	private final ExportDBDAO exportDBDAO;
@@ -23,24 +27,22 @@ public class ExportConsumerImpl implements ExportConsumer {
 	}
 
 	@Override
-	public void receiveMessage(String claimId){
+	public void receiveMessage(String claimId) {
 
 		if(!exportDBDAO.changeStatus(claimId, "IN PROGRESS")){
-			System.out.println("Status not changed!");//throw
+			log.warn("Status not changed!");//throw
 		}
-		System.out.println("Status changed!");
+		log.info("Status changed to " + "IN PROGRESS");
 
-		List<Todo> todos = todoTaskDAO.getAllTodoTasks();
-		//save in file
-		try {
-			Thread.sleep(30000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		TodoList todos = new TodoList();
+		todos.setTodos(todoTaskDAO.getAllTodoTasks());
+		String xmlTodos = ObjectToXMLConverter.objectToXMLConvert(todos);
+		log.info("Todos export converted in XML ({} symbols).", xmlTodos.length());
+		File xmlFile = XMLFileSaver.stringToXMLFile(xmlTodos);
+
+		if(!exportDBDAO.completeClaim(claimId, "COMPLETED", xmlFile.getAbsolutePath())){
+			log.warn("Status not changed!");//throw
 		}
-		if(!exportDBDAO.completeClaim(claimId, "COMPLETED", FILEPATH)){
-			System.out.println("Status not changed!");//throw
-		}
-		System.out.println("Status changed! Filepath - " + FILEPATH);
-		System.out.println(todos);
+		log.info("Status - COMPLETED. Todos export saved in XML file - {}.", xmlFile.getAbsolutePath());
 	}
 }
