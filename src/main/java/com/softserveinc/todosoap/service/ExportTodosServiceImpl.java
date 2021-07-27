@@ -1,6 +1,6 @@
 package com.softserveinc.todosoap.service;
 
-import com.softserveinc.todosoap.dao.ExportDBDAO;
+import com.softserveinc.todosoap.dao.ExportTodosDAO;
 import com.softserveinc.todosoap.models.ExportDBClaim;
 import com.softserveinc.todosoap.service.rabbitmq.ExportPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,19 +10,19 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Service
-public class ExportDBServiceImpl implements ExportDBService{
+public class ExportTodosServiceImpl implements ExportTodosService {
 
-	private final ExportDBDAO exportDBDAO;
+	private final ExportTodosDAO exportTodosDAO;
 	private final ExportPublisher exportPublisher;
 
 	@Autowired
-	public ExportDBServiceImpl(ExportDBDAO exportDBDAO, ExportPublisher exportPublisher) {
-		this.exportDBDAO = exportDBDAO;
+	public ExportTodosServiceImpl(ExportTodosDAO exportTodosDAO, ExportPublisher exportPublisher) {
+		this.exportTodosDAO = exportTodosDAO;
 		this.exportPublisher = exportPublisher;
 	}
 
 	@Override
-	public String claimExportDB() {
+	public String claimExport() {
 
 		ExportDBClaim claim = new ExportDBClaim();
 		claim.setId(UUID.randomUUID());
@@ -30,21 +30,21 @@ public class ExportDBServiceImpl implements ExportDBService{
 		claim.setStatus("ACCEPTED");
 		claim.setResultPath("");
 
-		exportDBDAO.create(claim);
+		exportTodosDAO.create(claim);
 		exportPublisher.publishClaim(claim.getId().toString());
 		return claim.getId().toString();
 	}
 
 	@Override
-	public String checkStatusExportDB(String id) {
+	public String checkStatus(String id) {
 
-		return exportDBDAO.checkStatus(UUID.fromString(id));
+		return exportTodosDAO.checkStatus(UUID.fromString(id));
 	}
 
 	@Override
-	public String downloadLinkExportDB(String id) {
+	public String downloadFileLink(String id) {
 
-		ExportDBClaim claim = exportDBDAO.findById(UUID.fromString(id));
+		ExportDBClaim claim = exportTodosDAO.findById(UUID.fromString(id));
 		if(claim.getStatus().equals("COMPLETED")){
 			return claim.getResultPath();
 		} else {

@@ -17,7 +17,7 @@ public class XMLFileSaver {
 
 	public static File stringToXMLFile(String xmlSource) {
 
-		File xmlFile = new File(LocalTime.now().toString() + ".xml");
+		File xmlFile = new File("/tmpfiles/" + LocalTime.now().toString() + ".xml");
 		try (FileWriter fileWriter = new FileWriter(xmlFile)) {
 			fileWriter.write(xmlSource);
 		} catch (IOException e) {

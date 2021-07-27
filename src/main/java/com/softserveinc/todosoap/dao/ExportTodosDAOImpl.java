@@ -9,13 +9,13 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public class ExportDBDAOImpl implements ExportDBDAO{
+public class ExportTodosDAOImpl implements ExportTodosDAO {
 
 	private final CassandraOperations cassandraTemplate;
 	private final CqlTemplate cqlTemplate;
 
 	@Autowired
-	public ExportDBDAOImpl(CassandraOperations cassandraTemplate, CqlTemplate cqlTemplate) {
+	public ExportTodosDAOImpl(CassandraOperations cassandraTemplate, CqlTemplate cqlTemplate) {
 		this.cassandraTemplate = cassandraTemplate;
 		this.cqlTemplate = cqlTemplate;
 	}

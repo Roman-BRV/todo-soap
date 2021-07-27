@@ -1,6 +1,6 @@
 package com.softserveinc.todosoap.service.rabbitmq;
 
-import com.softserveinc.todosoap.dao.ExportDBDAO;
+import com.softserveinc.todosoap.dao.ExportTodosDAO;
 import com.softserveinc.todosoap.dao.TodoTaskDAO;
 import com.softserveinc.todosoap.models.TodoList;
 import com.softserveinc.todosoap.util.ObjectToXMLConverter;
@@ -18,18 +18,18 @@ public class ExportConsumerImpl implements ExportConsumer {
 	private static final Logger log = LoggerFactory.getLogger(ExportConsumerImpl.class);
 
 	private final TodoTaskDAO todoTaskDAO;
-	private final ExportDBDAO exportDBDAO;
+	private final ExportTodosDAO exportTodosDAO;
 
 	@Autowired
-	public ExportConsumerImpl(TodoTaskDAO todoTaskDAO, ExportDBDAO exportDBDAO) {
+	public ExportConsumerImpl(TodoTaskDAO todoTaskDAO, ExportTodosDAO exportTodosDAO) {
 		this.todoTaskDAO = todoTaskDAO;
-		this.exportDBDAO = exportDBDAO;
+		this.exportTodosDAO = exportTodosDAO;
 	}
 
 	@Override
 	public void receiveMessage(String claimId) {
 
-		if(!exportDBDAO.changeStatus(claimId, "IN PROGRESS")){
+		if(!exportTodosDAO.changeStatus(claimId, "IN PROGRESS")){
 			log.warn("Status not changed!");//throw
 		}
 		log.info("Status changed to " + "IN PROGRESS");
@@ -40,7 +40,7 @@ public class ExportConsumerImpl implements ExportConsumer {
 		log.info("Todos export converted in XML ({} symbols).", xmlTodos.length());
 		File xmlFile = XMLFileSaver.stringToXMLFile(xmlTodos);
 
-		if(!exportDBDAO.completeClaim(claimId, "COMPLETED", xmlFile.getAbsolutePath())){
+		if(!exportTodosDAO.completeClaim(claimId, "COMPLETED", xmlFile.getAbsolutePath())){
 			log.warn("Status not changed!");//throw
 		}
 		log.info("Status - COMPLETED. Todos export saved in XML file - {}.", xmlFile.getAbsolutePath());

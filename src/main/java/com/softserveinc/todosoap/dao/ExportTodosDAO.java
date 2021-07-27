@@ -4,7 +4,7 @@ import com.softserveinc.todosoap.models.ExportDBClaim;
 
 import java.util.UUID;
 
-public interface ExportDBDAO {
+public interface ExportTodosDAO {
 
 	void create(ExportDBClaim claim);
 
