@@ -1,7 +1,8 @@
 package com.softserveinc.todosoap.service.rabbitmq;
 
-import com.softserveinc.todosoap.dao.ExportTodosDAO;
-import com.softserveinc.todosoap.dao.TodoTaskDAO;
+import com.softserveinc.todosoap.models.ExportTodosClaim;
+import com.softserveinc.todosoap.repository.ExportTodosRepository;
+import com.softserveinc.todosoap.repository.TodoTaskRepository;
 import com.softserveinc.todosoap.models.TodoList;
 import com.softserveinc.todosoap.util.ObjectToXMLConverter;
 import com.softserveinc.todosoap.util.XMLFileSaver;
@@ -11,38 +12,41 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class ExportConsumerImpl implements ExportConsumer {
 
 	private static final Logger log = LoggerFactory.getLogger(ExportConsumerImpl.class);
 
-	private final TodoTaskDAO todoTaskDAO;
-	private final ExportTodosDAO exportTodosDAO;
+	private final TodoTaskRepository todoTaskRepository;
+	private final ExportTodosRepository exportTodosRepository;
 
 	@Autowired
-	public ExportConsumerImpl(TodoTaskDAO todoTaskDAO, ExportTodosDAO exportTodosDAO) {
-		this.todoTaskDAO = todoTaskDAO;
-		this.exportTodosDAO = exportTodosDAO;
+	public ExportConsumerImpl(TodoTaskRepository todoTaskRepository, ExportTodosRepository exportTodosRepository) {
+		this.todoTaskRepository = todoTaskRepository;
+		this.exportTodosRepository = exportTodosRepository;
 	}
 
 	@Override
 	public void receiveMessage(String claimId) {
 
-		if(!exportTodosDAO.changeStatus(claimId, "IN PROGRESS")){
-			log.warn("Status not changed!");//throw
-		}
+		Optional<ExportTodosClaim> claimOptional = exportTodosRepository.findById(UUID.fromString(claimId));
+		ExportTodosClaim claim = claimOptional.orElseThrow(RuntimeException::new);
+		claim.setStatus("IN PROGRESS");
+		exportTodosRepository.save(claim);
 		log.info("Status changed to " + "IN PROGRESS");
 
 		TodoList todos = new TodoList();
-		todos.setTodos(todoTaskDAO.getAllTodoTasks());
+		todos.setTodos(todoTaskRepository.findAll());
 		String xmlTodos = ObjectToXMLConverter.objectToXMLConvert(todos);
 		log.info("Todos export converted in XML ({} symbols).", xmlTodos.length());
 		File xmlFile = XMLFileSaver.stringToXMLFile(xmlTodos);
 
-		if(!exportTodosDAO.completeClaim(claimId, "COMPLETED", xmlFile.getAbsolutePath())){
-			log.warn("Status not changed!");//throw
-		}
+		claim.setStatus("COMPLETED");
+		claim.setResultPath(xmlFile.getAbsolutePath());
+		exportTodosRepository.save(claim);
 		log.info("Status - COMPLETED. Todos export saved in XML file - {}.", xmlFile.getAbsolutePath());
 	}
 }

@@ -7,11 +7,10 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Table
-public class ExportDBClaim {
+public class ExportTodosClaim {
 
 	@PrimaryKey
 	private UUID id;
-	private String userEmail;
 	private Instant created;
 	private String status;
 	private String resultPath;
@@ -22,14 +21,6 @@ public class ExportDBClaim {
 
 	public void setId(UUID id) {
 		this.id = id;
-	}
-
-	public String getUserEmail() {
-		return userEmail;
-	}
-
-	public void setUserEmail(String userEmail) {
-		this.userEmail = userEmail;
 	}
 
 	public Instant getCreated() {
@@ -60,7 +51,6 @@ public class ExportDBClaim {
 	public String toString() {
 		return "ExportDBClaim{" +
 				"id=" + id +
-				", userEmail='" + userEmail + '\'' +
 				", created=" + created +
 				", status='" + status + '\'' +
 				", resultPath='" + resultPath + '\'' +

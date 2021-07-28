@@ -6,7 +6,7 @@ import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
 import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 
 @Configuration
-@EnableCassandraRepositories(basePackages = "com.softserveinc.todosoap.dao")
+@EnableCassandraRepositories(basePackages = "com.softserveinc.todosoap.repository")
 public class CassandraConfig extends AbstractCassandraConfiguration {
 
 	@Value("${spring.data.cassandra.keyspace-name}")
