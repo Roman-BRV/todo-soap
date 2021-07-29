@@ -1,6 +1,5 @@
 package com.softserveinc.todosoap.service;
 
-import com.softserveinc.todosoap.models.Todo;
 import com.softservinc.todosoap.TaskStatus;
 import com.softservinc.todosoap.TodoTask;
 
@@ -21,6 +20,4 @@ public interface TodoTaskService {
 	List<TodoTask> getTodoTasksByTag(String tag);
 
 	List<TodoTask> getAllTodoTasksOrderByCreated();
-
-	List<Todo> getAllTodoTasks();
 }

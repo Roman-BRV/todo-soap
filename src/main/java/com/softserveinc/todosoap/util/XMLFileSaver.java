@@ -1,28 +1,24 @@
 package com.softserveinc.todosoap.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class XMLFileSaver {
-
-	private static final Logger log = LoggerFactory.getLogger(XMLFileSaver.class);
 
 	private XMLFileSaver() {
 	}
 
-	public static File stringToXMLFile(String xmlSource) {
+	public static File stringToXMLFile(String xmlSource) throws IOException {
 
-		File xmlFile = new File("/tmpfiles/" + LocalTime.now().toString() + ".xml");
+		String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+		File xmlFile = new File("tempfiles/" + fileName + ".xml");
 		try (FileWriter fileWriter = new FileWriter(xmlFile)) {
 			fileWriter.write(xmlSource);
-		} catch (IOException e) {
-			log.error("Problems with saving fife - {}", e.getMessage());
 		}
+
 		return xmlFile;
 	}
 }

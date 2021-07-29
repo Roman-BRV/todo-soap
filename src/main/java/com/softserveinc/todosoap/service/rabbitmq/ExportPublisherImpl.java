@@ -12,13 +12,13 @@ public class ExportPublisherImpl implements ExportPublisher {
 
 	private static final Logger log = LoggerFactory.getLogger(ExportPublisherImpl.class);
 
-	@Value("${rabbitmq.exportdb.exchange-name}")
+	private final RabbitTemplate rabbitTemplate;
+
+	@Value("${rabbitmq.export-todos.exchange-name}")
 	private String exchangeName;
 
-	@Value("${rabbitmq.exportdb.routing-key}")
-	private String exportdbRoutingKey;
-
-	private final RabbitTemplate rabbitTemplate;
+	@Value("${rabbitmq.export-todos.routing-key}")
+	private String routingKey;
 
 	@Autowired
 	public ExportPublisherImpl(RabbitTemplate rabbitTemplate) {
@@ -28,7 +28,7 @@ public class ExportPublisherImpl implements ExportPublisher {
 	@Override
 	public void publishClaim(String claimId) {
 
-		rabbitTemplate.convertAndSend(exchangeName, exportdbRoutingKey, claimId);
-		log.info("Sent message: claimID - {} in exchange - {} with routing key - {}.", claimId, exchangeName, exportdbRoutingKey);
+		rabbitTemplate.convertAndSend(exchangeName, routingKey, claimId);
+		log.info("Sent message: claimID - {} in exchange - {}.", claimId, exchangeName);
 	}
 }

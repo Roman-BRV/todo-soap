@@ -23,10 +23,6 @@ public class Todo {
 	private List<String> tags;
 	private Instant created;
 
-	public void addTag(String tag) {
-		this.tags.add(tag);
-	}
-
 	public UUID getId() {
 		return id;
 	}
