@@ -51,7 +51,7 @@ public class TodosExportController {
 	}
 
 	@GetMapping("/{id}/file")
-	public ResponseEntity<String> downloadFile(@PathVariable String id){
+	public ResponseEntity<String> downloadFileLink(@PathVariable String id){
 
 		try {
 			String filePath = exportTodosService.downloadFileLink(id);
