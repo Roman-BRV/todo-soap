@@ -45,7 +45,10 @@ public class TodoTaskServiceImpl implements TodoTaskService {
 
 	public TodoTask update(String oldTaskText, String newTaskText, TaskStatus taskStatus, List<String> tags){
 
-		Todo newTask = todoTaskRepository.findByTaskText(oldTaskText);
+		Todo oldTask = todoTaskRepository.findByTaskText(oldTaskText);
+		todoTaskRepository.deleteByTaskStatusAndCreatedAndId(oldTask.getTaskStatus(), oldTask.getCreated(), oldTask.getId());
+
+		Todo newTask = oldTask;
 		newTask.setTaskText(newTaskText);
 		newTask.setTaskStatus(taskStatus);
 		newTask.setTags(tags);
@@ -59,7 +62,7 @@ public class TodoTaskServiceImpl implements TodoTaskService {
 
 		Todo removedTodo = todoTaskRepository.findByTaskText(taskText);
 		if(removedTodo != null){
-			todoTaskRepository.delete(removedTodo);
+			todoTaskRepository.deleteByTaskStatusAndCreatedAndId(removedTodo.getTaskStatus(), removedTodo.getCreated(), removedTodo.getId());
 			return true;
 		} else {
 			return false;
